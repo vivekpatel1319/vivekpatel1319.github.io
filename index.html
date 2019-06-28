@@ -1,15 +1,119 @@
 <!DOCTYPE html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Test Page</title>
+    <title>PureCloud WebChat Example</title>
 </head>
 <body>
 
-  <form action="test.php" method="post">
-    <input type="text" name="data" value="mydata" />
-    <input type="submit" />
-  </form>
+    <h1>PureCloud WebChat Example</h1>
+<script type="text/javascript">
+  window._genesys = {
+	widgets: {
+		webchat: {
+			transport: {
+				type: "purecloud-v2-sockets",
+				dataURL: "https://api.mypurecloud.com",
+				deploymentKey: "8dabda89-7e48-4d22-a7d2-db594ad47082",
+				orgGuid: "96f271bd-dd74-455a-879b-6c4108c69548",
+				interactionData: {
+					routing: {
+						targetType: "QUEUE",
+						targetAddress: "Patel Chat Queue",
+						priority: 2
+					}
+				}
+			},
+			userData: {
+			addressStreet: "7601 Interactive Way",
+			addressCity: "Indianapolis",
+			addressPostalCode: "46278",
+			addressState: "IN",
+			phoneNumber: "(555) 867-5309",
+			phoneType: 'Cell',
+			customerId: '59606',
+			// These fields should be provided via advanced configuration
+			// firstName: 'Praenomen',
+			// lastName: 'Gens',
+			// email: 'praenomen.gens@calidumlitterae.com',
+			// subject: 'Chat subject'
+			}
+		}
+	}
+};
+</script>
 
-<iframe src="https://prod-inin-directory-service-profile.s3.amazonaws.com/5821f2d3/5bfd/4a71/9e27/7ab7ed8d8888.jpg" width="200" height="200"></iframe>
+ <script src="https://apps.mypurecloud.com/widgets/9.0/cxbus.min.js" onload="javascript:CXBus.configure({debug:false,pluginsPath:'https://apps.mypurecloud.com/widgets/9.0/plugins/'}); CXBus.loadPlugin('widgets-core');"></script>
+
+	<script>
+    const customPlugin = CXBus.registerPlugin('Custom');
+
+    customPlugin.subscribe('WebChatService.started', function (e) {
+      console.log('Chat started', e);
+    });
+
+    customPlugin.subscribe('WebChatService.ended', function (e) {
+      console.log('Chat ended', e);
+    });
+	</script>
+
+<button type="button" id="chat-button" onclick="customPlugin.command('WebChat.open', getAdvancedConfig());">Start Chat</button>
+
+  <script type="text/javascript">
+		function getAdvancedConfig() {
+			return {
+				form: {
+					autoSubmit: false,
+					firstname: '',
+					lastname: '',
+					email: '',
+					subject: ''
+				},
+				formJSON: {
+					wrapper: '<table></table>',
+					inputs: [
+						// Default fields
+						{
+							id: 'cx_webchat_form_firstname',
+							name: 'firstname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'First Name'
+						},
+						{
+							id: 'cx_webchat_form_lastname',
+							name: 'lastname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'Last Name'
+						},
+						{
+							id: 'cx_webchat_form_email',
+							name: 'email',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Email'
+						},
+						{
+							id: 'cx_webchat_form_subject',
+							name: 'subject',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Subject'
+						},
+						// Custom Fields
+						{
+							id: 'custom_field_1',
+							name: 'customField1',
+							maxlength: '100',
+							placeholder: 'Custom Data',
+							label: 'Custom Field 1',
+							value: ''
+						}
+					]
+				}
+			};
+		}
+	</script>
+
 </body>
 </html>
