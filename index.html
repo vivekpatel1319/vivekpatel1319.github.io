@@ -2,16 +2,12 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>PureCloud WebChat Example</title>
-    <link rel="stylesheet" href="guestdemo.css" type="text/css"/>
 </head>
 <body>
 
     <h1>PureCloud WebChat Example</h1>
 
-    <h3>Click to video call</h3>
-    <p id="response"></p>
-    <button id="clickButton">Start video</button>
-    <iframe width="600" height="600" id="videoengageriframe" allow="microphone; camera"></iframe>
+    <div id="button"><a href="/guestdemo.html">Switch to Video Chat</a></div>
 
 <script type="text/javascript">
   window._genesys = {
@@ -122,8 +118,5 @@
 			};
 		}
 	</script>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-  <script src="https://sdk-cdn.mypurecloud.com/javascript-guest/4.1.0/purecloud-guest-chat-client.min.js"></script>
-  <script src="guestdemo.js"></script>
 </body>
 </html>
