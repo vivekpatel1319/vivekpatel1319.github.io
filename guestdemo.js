@@ -18,7 +18,7 @@
     // Deployment ID
     // You must create one in your admin panel under Web Chat  in
     // https://apps.mypurecloud.com/directory/#/admin/integrations/chat
-    const deploymentId = '8dabda89-7e48-4d22-a7d2-db594ad47082';
+    const deploymentId = '24bc6aba-0b3a-41f5-8259-6f39cd2eff6e';
 
 
     // SmartVideo cloud address
