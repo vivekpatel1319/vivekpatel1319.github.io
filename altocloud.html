@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PureCloud WebChat Demo</title>
+    <script src="https://apps.mypurecloud.com/widgets/9.0/cxbus.min.js" onload="javascript:CXBus.configure({debug:false,pluginsPath:'https://apps.mypurecloud.com/widgets/9.0/plugins/'}); CXBus.loadPlugin('widgets-core');"></script>
+
+	<script type="text/javascript">
+		function setSite(e){
+			if ((e.keyCode==13) && (document.getElementById('newSite').value != '')){
+				document.getElementById('site').src=newSite.value;
+				document.getElementById('controls').style.display='none';
+			}
+		}
+	</script>
+
+</head>
+
+<body>
+	<script type="text/javascript">
+		var counter = 0;
+		function pageCounter(){
+			var result = '';
+			if (counter > 0)
+				result = 'newPage'+counter;
+			counter++;
+			return result;
+		}
+	</script>
+
+  <script type="text/javascript">
+    window._genesys = {
+      widgets: {
+        webchat: {
+          transport: {
+            type: 'purecloud-v2-sockets',
+            dataURL: 'https://api.mypurecloud.com',
+            deploymentKey : '4930eded-9006-4c91-bb50-c376cb9d3f0f',
+            orgGuid : '96f271bd-dd74-455a-879b-6c4108c69548',
+            /*interactionData: {
+              routing: {
+                targetType: 'QUEUE',
+                targetAddress: 'Brian - Awesome Care',
+                priority: 2
+              }
+            }*/
+          },
+          userData: {
+            addressStreet: '2001 Junipero Serra Blvd',
+            addressCity: 'Daly City',
+            addressPostalCode: '94014',
+            addressState: 'CA',
+            phoneNumber: '+16282005160',
+            phoneType: 'Cell'
+          }
+        }
+      }
+    };
+
+    const customPlugin = CXBus.registerPlugin('Custom');
+
+    customPlugin.subscribe('WebChatService.started', function (e) {
+      console.log('Chat started', e);
+    });
+
+    customPlugin.subscribe('WebChatService.ended', function (e) {
+      console.log('Chat ended', e);
+    });
+  </script>
+
+  <script type="text/javascript">
+		function getAdvancedConfig() {
+			return {
+				form: {
+					autoSubmit: false,
+					firstname: 'Brian',
+					lastname: 'Spencer',
+					email: 'brian.spencer@genesys.com',
+					subject: 'Website Support'
+				},
+				formJSON: {
+					wrapper: '<table></table>',
+					inputs: [
+						// Default fields
+						{
+							id: 'cx_webchat_form_firstname',
+							name: 'firstname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'First Name'
+						},
+						{
+							id: 'cx_webchat_form_lastname',
+							name: 'lastname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'Last Name'
+						},
+						{
+							id: 'cx_webchat_form_email',
+							name: 'email',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Email'
+						},
+						{
+							id: 'cx_webchat_form_subject',
+							name: 'subject',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Subject'
+						},
+						// Custom Fields
+						//{
+						//	id: 'custom_field_1',
+						//	name: 'customField1',
+						//	maxlength: '100',
+						//	placeholder: 'Custom Data',
+						//	label: 'Custom Field 1',
+						//	value: 'My Custom Value'
+						//}
+					]
+				}
+			};
+		}
+	</script>
+
+	<script>
+		(function(a,t,c,l,o,u,d){a['_genesysJourneySdk']=o;a[o]=a[o]||function(){
+		(a[o].q=a[o].q||[]).push(arguments)},a[o].l=1*new Date();u=t.createElement(c),
+		d=t.getElementsByTagName(c)[0];u.async=1;u.src=l;u.charset='utf-8';d.parentNode.insertBefore(u,d)
+		})(window, document, 'script', 'https://apps.mypurecloud.com/journey/sdk/js/web/v1/ac.js', 'ac');
+		ac('init', '96f271bd-dd74-455a-879b-6c4108c69548', { region: 'use1' });
+		ac('pageview');
+	</script>
+
+	<div id="controls" style="position: fixed; bottom: 50%; right: 45%; border: none; color:#000; background-color:#9e9e9e; z-index:999; width:200px; height: auto;">
+		<input id="newSite" type="text" onkeypress="setSite(event);" size="30" />
+	</div>
+
+	<div id="contactUs" style="position: fixed; top: 200px; right: 0px; width: 50px; height: 50px; border-style: solid; border-width: 1px 0px 1px 1px; border-color: black; 	background-color:#9e9e9e; z-index:999;">
+		<input type="image" src="https://dhqbrvplips7x.cloudfront.net/appFoundry/581/assets/img/purecloud-logo.jpg" width="50px" onclick="customPlugin.command('WebChat.open', getAdvancedConfig());" />
+	</div>
+
+
+	<div id="mainFrame" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;" >
+		<iframe id="site" src="" onload="javascript: var thisCount = pageCounter(); if (thisCount != '') {ac('record', thisCount); console.log(thisCount);};" style="width: 100%; height: 100%;" />
+	</div>
+
+</body>
+</html>
