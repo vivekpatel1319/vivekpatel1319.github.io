@@ -35,7 +35,7 @@
         <script type="text/javascript">
             // This client ID expects the redirect URL to be http://localhost:8080/
             const clientId = 'e2a39a17-7621-410e-baf3-2c1e14b15152';
-            const redirectUri = "https://vivekpatel1319.github.io";
+            const redirectUri = "https://vivekpatel1319.github.io/search";
 
             // Set purecloud objects
             const platformClient = require('platformClient');
@@ -129,7 +129,7 @@
                 var queryStringData = {
                     response_type : "token",
                     client_id : "e2a39a17-7621-410e-baf3-2c1e14b15152",
-                    redirect_uri : "https://vivekpatel1319.github.io"
+                    redirect_uri : "https://vivekpatel1319.github.io/search"
                 }
 
                 window.location.replace("https://login.mypurecloud.com/oauth/authorize?" + jQuery.param(queryStringData));
@@ -192,7 +192,7 @@
                     })
 
                     .catch((err) => console.error(err));
-                    
+
 
 
                             // $.ajax({
