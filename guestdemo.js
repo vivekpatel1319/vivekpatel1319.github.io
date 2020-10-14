@@ -33,7 +33,7 @@
 
     // Inbound Chat queue.
     // Chat queue for the agents that will receive video calls.
-    const queueName = 'Patel ACD Queue';  
+    const queueName = 'Smart Video';  
 
     // Start with camera on or off.
     // true - ignore SmartVideo setting 'Customer starts the call with camera ON'
