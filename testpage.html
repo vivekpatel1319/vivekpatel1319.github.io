@@ -21,6 +21,15 @@
     </form>
     <div id="chatContainer" style="height:600px"></div>
 
+    <script
+  id="purecloud-webchat-js"
+  type="text/javascript"
+  src="https://apps.mypurecloud.com/webchat/jsapi-v1.js"
+  region="us-east-1"
+  org-guid="96f271bd-dd74-455a-879b-6c4108c69548"
+  deployment-key="20a2eb62-766e-4bb1-88f2-1a0536a36b45"
+></script>
+
     <!-- Replace mypurecloud.com with the hostname for your Genesys Cloud region -->
     <script src="https://apps.mypurecloud.com/webchat/jsapi-v1.js" type="text/javascript"></script>
 
@@ -47,6 +56,10 @@
 
                 // Target agent email (OPTIONAL)
                 "agentEmail": agentEmail,
+
+                // Queue Name
+
+                "queueName": "Patel ACD Queue",
 
                 // Log level
                 "logLevel": "DEBUG",
@@ -111,6 +124,8 @@
         }
     })();
     </script>
+
+    
 
 </body>
 </html>
