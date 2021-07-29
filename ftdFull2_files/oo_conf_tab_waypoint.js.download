@@ -1,0 +1,71 @@
+(function (w, o) {
+    'use strict';
+
+    o.oo_tab = new o.Ocode({
+        tab: {
+            position: 'right',
+            title: 'Feedback',
+            tabType: 0,
+            verbiage: 'Feedback',
+            iconPath: 'https://gateway.foresee.com/code/5.10.1-oo/oo_tab_icon_retina.gif'
+        },
+        disableShow: true
+    });
+
+    o.oo_waypoint = new o.Waypoint({
+        pathToAssets: 'https://gateway.foresee.com/code/5.10.1-oo/',
+        companySlogan: 'Give us feedback',
+        companyLogo: 'data:image/png;base64,' + OOo.encodedImages.ftdLogo,
+        linkFocus: false,
+        categories: {
+            website: {
+                oCode: {
+                    customVariables: function () { var cv = OOo.customData.getVars(); return cv }
+                },
+                buttonText: 'Our Website'
+            },
+            product: {
+                oCode: {
+                    referrerRewrite: {
+                        searchPattern: /:\/\/[^\/]*/,
+                        replacePattern: '://product.ftd.com'
+                    },
+                    customVariables: function () { var cv = OOo.customData.getVars(); return cv }
+                },
+                buttonText: 'Our Products'
+            },
+            pricing: {
+                oCode: {
+                    referrerRewrite: {
+                        searchPattern: /:\/\/[^\/]*/,
+                        replacePattern: '://pricing.ftd.com'
+                    },
+                    customVariables: function () { var cv = OOo.customData.getVars(); return cv }
+                },
+                buttonText: 'Our Pricing'
+            },
+            problems: {
+                oCode: {
+                    referrerRewrite: {
+                        searchPattern: /:\/\/[^\/]*/,
+                        replacePattern: '://general.ftd.com'
+                    },
+                    customVariables: function () { var cv = OOo.customData.getVars(); return cv }
+                },
+                buttonText: 'General Suggestions'
+            },
+        },
+        wpmarkup: "<div id='oo_waypoint_prompt' role='dialogue' aria-describedby='oo_waypoint_message'><div id='oo_waypoint_company_logo'></div><div id='oo_waypoint_content'><p id='oo_waypoint_message'>How are we doing?<br></br>Select a category</p><p id='waypoint_icons'></p><p id='ol_waypoint_brand_logo'><span aria-label='Powered by OpinionLab.'></span></p></div><a id='oo_waypoint_close_prompt' href='#' aria-label='Close dialog'><div class='screen_reader'>Close dialogue</div><span aria-hidden='true'>&#10006;</span></a></div><!--[if IE 8]><style>/* IE 8 does not support box-shadow */#oo_waypoint_prompt #oo_waypoint_content { width: 400px; padding: 40px 49px 20px 49px; border: 1px solid #ccc; }</style><![endif]-->"
+    });
+    o.appendWaypoint('oo_tab');
+    o.appendWaypointMobile('oo_tab', 2);
+
+    if (typeof OOo !== 'undefined' && typeof OOo.releaseDetails !== 'object') { OOo.releaseDetails = []; }
+    OOo.releaseDetails.push({
+        author: 'JL',
+        timeStamp: '01/07/2021, 10:33:22',
+        fileName: 'oo_conf_tab_waypoint.js',
+        ticketNumber: 'DYN-1133571'
+    });
+
+})(window, OOo);

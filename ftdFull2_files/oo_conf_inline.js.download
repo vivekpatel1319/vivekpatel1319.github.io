@@ -1,0 +1,32 @@
+(function (w, o) {
+    'use strict';
+
+    var surveySwitch;
+    if (o.Browser.isMobile) {
+        surveySwitch = "mobile"
+    } else {
+        surveySwitch = "desktop"
+    }
+
+    o.oo_feedback = new o.Ocode({
+        referrerRewrite: {
+            searchPattern: /:\/\/[^\/]*/,
+            replacePattern: '://confirmation.ftd.com/' + surveySwitch
+        },
+        customVariables: function () { var cv = OOo.customData.getVars(); return cv }
+    });
+
+    o.oo_launch = function (e, feedback) {
+        var evt = e || w.event;
+        o[feedback].show(evt);
+    };
+
+    if (typeof OOo !== 'undefined' && typeof OOo.releaseDetails !== 'object') { OOo.releaseDetails = []; }
+    OOo.releaseDetails.push({
+        author: 'JL',
+        timeStamp: '01/07/2021, 10:30:11',
+        fileName: 'oo_conf_inline.js',
+        ticketNumber: 'DYN-1133571'
+    });
+
+})(window, OOo);
