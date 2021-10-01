@@ -1,0 +1,140 @@
+(function(w){
+  var config = {"metricsLabels":{"contentBoards":"TR Content Board","personalizations":"TR Personalization","audiences":"TR Audience","campaigns":"TR Campaign"},"hitTypes":{"contentBoards":"event","audiences":"event","personalizations":"event","campaigns":"event"},"shouldTrackOrgAssets":true,"firmTrackProvider":"ga","triblioVisitorId":"SvOJn9ICPjIv4GLX1RdMTG8u","gaObjectAlias":"ga"};
+  var triblioVisitorId = config.triblioVisitorId;
+  var firmographicRecord =  {"name":"Charter Communications","sicCode":"J6110","isIsp":"N/A","employees":"N/A","revenue":"N/A","city":"N/A","region":"N/A","country":"N/A","domain":"N/A","naicCode":"517311","employeesCode":"N/A","revenueCode":"N/A","industry":"Telecommunications","subIndustry":null};
+  var shouldTrackOrgAssets = config.shouldTrackOrgAssets;
+  var eIdsToNames = {"personalizations":{"8230":"IVS Dual Stage Venting - Google Segment","eP88":"Triblio Overlay with Form 2","6BxG":"RP-Overlay","5kxw":"RP-Overlay","xeGg":"RP-Overlay","4ROj":"IVS Dual Stage Venting - Overlay","m4a9":"RP-Overlay","on89":"RP-Overlay","xPRe":"RP-Product-Launch-Woodworking","GWzk":"IAF RP Metal Display Ads","b81Z":"Ad","vkdW":"IAF-Grain-RP-Product-Launch"},"campaigns":{"Oae5":"IAF-RP-Product-Launch-February-2021-Metals","bJMj":"IVS Dual Stage Venting","YDnO":"IAF-RP-Product-Launch-February-2021-Grain","OabX":"IAF-RP-Product-Launch-February-2021-Woodworking","ng2Y":"Filterminder Early Adopter"},"contentHubs":{},"audiences":{"1OAl":"Filterminder Early Adopter","4D0K":"Sustainability Compliance Reporting Webinar","Xpxd":"IVS June 2021 Battery Pack Webinar","E5go":"Test/Example","kxBR":"QLY w/PS - GTS","0mYa":"Notification Audience","3mO5":"Bottled Water Companies","oK7g":"IAF - Spring Cleaning","70l4":"IAF-RP-Product-Launch-Metals","YxAZ":"IAF-RP-Product-Launch-Woodworking","WxpP":"GTS June 2020 Conference","kQm2":"IVS - June Webinar","pD7K":"GTS - Quick Lock Yoke (QLY) Campaign July 2020","lKkG":"IVS Dual State Venting - October/November 2020","av51":"CAP test","QxOk":"Everyone (do not edit or delete)","oeEd":"CAP Target Accounts","RjkO":"IVS Dual Stage Venting","gjbd":"CTS June 2020 Conference","KgPR":"Connected Solutions EZ Select","dDOw":"Aerospace and Defense","1XjW":"IAF Product Page Visitors","AW4E":"IAF-RP-Product-Launch-Grain","6epl":"IAF Survey"}};
+  var gaObjectAlias = config.gaObjectAlias;
+  var thirdPartyLibraryLoaded = false;
+
+  if(!w.Triblio){ w.Triblio = {}; }
+  if(w.Triblio.onAccountIdentificationReady){ w.Triblio.onAccountIdentificationReady(firmographicRecord); }
+  w.Triblio.getAccountIdentification = function(){
+    return firmographicRecord;
+  };
+
+  if(!w.TriblioAssetNameTracking) w.TriblioAssetNameTracking = {queued:[]};
+
+  function GATracker(){
+    this.maxRetries = 1000;
+    this.retryCount = 0;
+  }
+
+  GATracker.prototype.run = function(){
+    var that = this;
+
+    this.waitForThirdParty(function(){
+      that.postFirmographicData();
+
+      that.checkAssetNamesQueue();
+    });
+  };
+
+  GATracker.prototype.waitForThirdParty = function(callback){
+    var that = this;
+
+    if(typeof w[gaObjectAlias] === "undefined" && this.retryCount <= this.maxRetries){
+      /*wait for ga to load*/
+      setTimeout(function(){
+        that.retryCount++;
+        that.waitForThirdParty(callback);
+      }, 5);
+    }
+    else if(this.retryCount > this.maxRetries){
+      console.log("cant find google analytics library on page!");
+    }
+    else{
+      thirdPartyLibraryLoaded = true;
+      callback();
+    }
+  };
+
+  GATracker.prototype.postFirmographicData = function(){
+    var data = {"name":"Charter Communications","sicCode":"J6110","isIsp":"N/A","employees":"N/A","revenue":"N/A","city":"N/A","region":"N/A","country":"N/A","domain":"N/A","naicCode":"517311","employeesCode":"N/A","revenueCode":"N/A","industry":"Telecommunications","subIndustry":null};
+
+  };
+
+  GATracker.prototype.checkAssetNamesQueue = function(){
+    var that = this;
+
+    if(w.TriblioAssetNameTracking.queued){
+      w.TriblioAssetNameTracking.queued.forEach(function(ids){
+        that.postAssetNames(ids);
+      });
+    }
+  };
+
+  GATracker.prototype.postAssetNames = function(ids){
+    if(shouldTrackOrgAssets && thirdPartyLibraryLoaded){
+      var data = _getAssetNamesFromIds(ids);
+
+      data.forEach(function(d){
+      window[gaObjectAlias]("send",{
+        "hitType": d.hitType,
+        "eventCategory": d.metricsLabel,
+        "eventLabel": d.name,
+        "nonInteraction": true
+      });
+    });
+  
+    }
+  };
+
+  function _getAssetNamesFromIds(data){
+    /*currently there is no click tracking on assets for ga, so get out of here!*/
+    if(data.action === 'click') return [];
+
+    var lookup = eIdsToNames;
+    if(!lookup || !Object.keys(lookup).length){
+      lookup = {personalizations:{}, contentHubs: {}, audiences:{}, campaigns:{}};
+    }
+
+    var names = [];
+    var isTypeBoardAndHasData = data.hubId && lookup.contentHubs[data.hubId];
+
+    if(isTypeBoardAndHasData){
+      names.push({
+        metricsLabel:config.metricsLabels.contentBoards,
+        name: lookup.contentHubs[data.hubId],
+        hitType: config.hitTypes.contentBoards
+      });
+    }
+    else if(data.type !== "board" && data.personalizationId && data.audienceSegmentId && data.campaignId){
+      var personalizationIds = data.personalizationId.split(",");
+      var audienceSegmentIds = data.audienceSegmentId.split(",");
+      var campaignIds = data.campaignId.split(",");
+
+      personalizationIds.forEach(function(pId, index){
+        var hasPersonalization = (personalizationIds[index] && lookup.personalizations[personalizationIds[index]]) ? true : false;
+        var hasAudience = (audienceSegmentIds[index] && lookup.audiences[audienceSegmentIds[index]]) ? true : false;
+        var hasCampaign = (campaignIds[index] && lookup.campaigns[campaignIds[index]]) ? true : false;
+
+        if(hasPersonalization && hasAudience && hasCampaign){
+          names.push({
+            metricsLabel:config.metricsLabels.personalizations,
+            name: lookup.personalizations[personalizationIds[index]],
+            hitType: config.hitTypes.personalizations
+          });
+
+          names.push({
+            metricsLabel: config.metricsLabels.campaigns,
+            name: lookup.campaigns[campaignIds[index]],
+            hitType: config.hitTypes.campaigns
+          });
+
+          names.push({
+            metricsLabel: config.metricsLabels.audiences,
+            name: lookup.audiences[audienceSegmentIds[index]],
+            hitType: config.hitTypes.audiences
+          });
+        }
+      });
+    }
+    return names;
+  }
+
+  var tracker = new GATracker();
+  w.TriblioAssetNameTracking.postAssetNames = tracker.postAssetNames;
+
+  tracker.run();
+}(window));
