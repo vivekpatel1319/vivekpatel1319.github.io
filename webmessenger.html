@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Messenger Test</title>
+    <script type="text/javascript" charset="utf-8">  (function (g, e, n, es, ys) {    g['_genesysJs'] = e;    g[e] = g[e] || function () {      (g[e].q = g[e].q || []).push(arguments)    };    g[e].t = 1 * new Date();    g[e].c = es;    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);  })(window, 'Genesys', 'https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js', {    environment: 'use1',    deploymentId: '3a4bdf9b-64df-40c4-88dc-611512eff2c5'  });</script>
+    <script type="text/javascript">
+      function toggleMessenger(){
+        Genesys("command", "Messenger.open", {},
+          function(o){},  // if resolved
+          function(o){    // if rejected
+            Genesys("command", "Messenger.close");
+          }
+        );
+      }
+    </script>
+  </head>
+<body>
+    <h1>This is a test 123</h1>
+    <p>
+        This is a test to see if web messenger is working!
+    </p>
+<button id="custom-launcher" onclick="toggleMessenger">
+  Messenger
+</button>
+
+
+
+</body>
+</html>
