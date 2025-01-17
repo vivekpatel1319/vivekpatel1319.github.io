@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script type="text/javascript" charset="utf-8">
+      (function (g, e, n, es, ys) {
+        g["_genesysJs"] = e;
+        g[e] =
+          g[e] ||
+          function () {
+            (g[e].q = g[e].q || []).push(arguments);
+          };
+        g[e].t = 1 * new Date();
+        g[e].c = es;
+        ys = document.createElement("script");
+        ys.async = 1;
+        ys.src = n;
+        ys.charset = "utf-8";
+        document.head.appendChild(ys);
+      })(
+        window,
+        "Genesys",
+        "https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js",
+        {
+          environment: "prod",
+          deploymentId: "0a963fa5-641d-4bb3-8a58-fb5463389052",
+        }
+      );
+    </script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      const customLauncher = document.getElementById("custom-launcher"); // Custom launcher button
+      let bMessengerOpened = false; // Initial status of Messenger: closed
+
+      // #1 Subscribe to the Messenger.ready event - Show custom launcher button when Messenger is ready
+      Genesys(
+        "subscribe",
+        "Messenger.ready",
+        (e) => (customLauncher.style.display = "block")
+      );
+
+      // #2 Subscribe to the Messenger.opened event - Update the status of Messenger as opened
+      Genesys("subscribe", "Messenger.opened", (e) => {
+        bMessengerOpened = true;
+        /*
+          Update your custom launcher button here indicating a Messenger opened state i.e. show a KeyboardArrowDownIcon
+          or hide your custom launcher button if you prefer not to indicate that Messenger is opened
+        */
+        customLauncher.style.display = "none";
+        console.log(e);
+      });
+
+      // #3 Subscribe to the Messenger.closed event - Update the status of Messenger as closed
+      Genesys("subscribe", "Messenger.closed", (e) => {
+        bMessengerOpened = false;
+        /*
+          Update your custom launcher button here indicating a Messenger closed state i.e. show a MessageIcon
+          or show your custom launcher button if you prefer to indicate that Messenger is closed
+        */
+        customLauncher.style.display = "block";
+        console.log(e);
+      });
+
+      const openMessenger = () => {
+        console.log("Opening messenger...");
+        Genesys("command", "Messenger.open");
+      };
+      const closeMessenger = () => {
+        console.log("Closing messenger...");
+        Genesys("command", "Messenger.close");
+      };
+
+      const toggleMessenger = () => {
+        bMessengerOpened ? closeMessenger() : openMessenger();
+      };
+    </script>
+  </body>
+</html>
