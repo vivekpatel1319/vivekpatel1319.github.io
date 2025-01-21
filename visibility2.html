@@ -75,20 +75,18 @@
         console.log(e);
       });
 
-      // #4 Using DataBase commands
-      Genesys("command", "Database.set", {
-        messaging: {
-          customAttributes: {
-            department: "sales",
-            property_type: "apartment",
-            device: "mobile",
-          },
-        },
-      });
-
       const openMessenger = () => {
         console.log("Opening messenger...");
         Genesys("command", "Messenger.open");
+        Genesys("command", "Database.set", {
+          messaging: {
+            customAttributes: {
+              department: "sales",
+              property_type: "apartment",
+              device: "mobile",
+            },
+          },
+        });
       };
       const closeMessenger = () => {
         console.log("Closing messenger...");
