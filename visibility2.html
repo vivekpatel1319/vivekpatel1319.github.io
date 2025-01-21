@@ -26,6 +26,7 @@
         {
           environment: "prod",
           deploymentId: "500a8da8-ebb6-4caf-b411-4c55c99c34a9",
+          debug: true,
         }
       );
     </script>
@@ -72,6 +73,17 @@
         */
         customLauncher.style.display = "block";
         console.log(e);
+      });
+
+      // #4 Using DataBase commands
+      Genesys("command", "Database.set", {
+        messaging: {
+          customAttributes: {
+            department: "sales",
+            property_type: "apartment",
+            device: "mobile",
+          },
+        },
       });
 
       const openMessenger = () => {
