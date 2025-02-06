@@ -9,6 +9,21 @@
       src="https://global.oktacdn.com/okta-auth-js/7.7.0/okta-auth-js.min.js"
       type="text/javascript"
     ></script>
+    <!-- widget stuff here -->
+    <script
+      src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/js/okta-sign-in.min.js"
+      type="text/javascript"
+    ></script>
+    <link
+      href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/css/okta-sign-in.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/css/okta-theme.css"
+      type="text/css"
+      rel="stylesheet"
+    />
 
     <script type="text/javascript" charset="utf-8">
       (function (g, e, n, es, ys) {
@@ -36,47 +51,17 @@
         }
       );
     </script>
-    <script type="text/javascript">
-      // UPDATE THESE FOR YOUR OKTA TENANT
-      var baseOktaURL = "https://dev-91539029.okta.com"; //For example, https://dev-12345678.okta.com
-      var appClientID = "0oan9o2knsVqTvcJV5d7"; // For example, 0oa73hm5sh9jf6s5e1d6
-
-      // Bootstrap the AuthJS Client
-      const authClient = new OktaAuth({
-        // Required Fields for OIDC client
-        url: baseOktaURL,
-        clientId: appClientID,
-        redirectUri: "https://vivekpatel1319.github.io/testingPage", //or the redirect URI for your app
-        issuer: baseOktaURL, // oidc
-        scopes: ["openid", "profile", "email"],
-      });
-
-      if (authClient.isLoginRedirect()) {
-        // Parse token from redirect url
-        console.log("Parse token from redirect url");
-        authClient.token.parseFromUrl().then((data) => {
-          const { idToken } = data.tokens;
-          // Display the Token
-          const str1 = document.createElement("p");
-          str1.innerHTML = `<b>${idToken.claims.email}</b> (email)<br /><b>${
-            idToken.claims.sub
-          }</b> (sub)<br /><br />Token Response:<br /><code style="word-wrap: break-word;">${JSON.stringify(
-            idToken
-          )}</code><br /><br/>Parsed from JWT<br />Client ID: <b>${
-            authClient.options.clientId
-          }</b><br />Issuer: <b>${authClient.options.issuer}</b>`;
-          document.getElementById("content-jwt").appendChild(str1);
-        });
-      } else {
-        // Always Redirect to get a "Fresh JWT" - Skipping the Token Manager in this example
-        console.log("Attempt to retrieve ID Token from redirect");
-        authClient.token.getWithRedirect({
-          responseType: ["id_token"],
-        });
-      }
-    </script>
   </head>
   <body>
+    <div class="container">
+      <h1 class="text-center">Simple Web Page</h1>
+      <div id="messageBox" class="jumbotron">
+        You are not logged in. Get outta here! Shoo! >:S
+      </div>
+      <!-- where the sign-in form will be displayed -->
+      <div id="okta-login-container"></div>
+    </div>
+
     <h1>Visibility is Hide</h1>
     <b>Okta Auth JS Simple Redirect App</b>
     <hr />
@@ -170,6 +155,54 @@
       const toggleMessenger = () => {
         bMessengerOpened ? closeMessenger() : openMessenger();
       };
+    </script>
+
+    <script type="text/javascript">
+      var oktaSignIn = new OktaSignIn({
+        baseOktaURL: "https://dev-91539029.okta.com", //For example, https://dev-12345678.okta.com
+        appClientID: "0oan9o2knsVqTvcJV5d7", // For example, 0oa73hm5sh9jf6s5e1d6
+        authParams: {
+          issuer: "default",
+          responseType: ["token", "id_token"],
+          display: "page",
+        },
+      });
+
+      if (oktaSignIn.token.hasTokensInUrl()) {
+        oktaSignIn.token.parseTokensFromUrl(
+          // If we get here, the user just logged in.
+          function success(res) {
+            var accessToken = res[0];
+            var idToken = res[1];
+
+            oktaSignIn.tokenManager.add("accessToken", accessToken);
+            oktaSignIn.tokenManager.add("idToken", idToken);
+
+            window.location.hash = "";
+            document.getElementById("messageBox").innerHTML =
+              "Hello, " + idToken.claims.email + "! You just logged in! :)";
+          },
+          function error(err) {
+            console.error(err);
+          }
+        );
+      } else {
+        oktaSignIn.session.get(function (res) {
+          // If we get here, the user is already signed in.
+          if (res.status === "ACTIVE") {
+            document.getElementById("messageBox").innerHTML =
+              "Hello, " + res.login + "! You are *still* logged in! :)";
+            return;
+          }
+          oktaSignIn.renderEl(
+            { el: "#okta-login-container" },
+            function success(res) {},
+            function error(err) {
+              console.error(err);
+            }
+          );
+        });
+      }
     </script>
   </body>
 </html>
