@@ -10,19 +10,20 @@
       type="text/javascript"
     ></script>
     <!-- widget stuff here -->
+    <!-- Latest CDN production Javascript and CSS -->
     <script
-      src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/js/okta-sign-in.min.js"
+      src="https://global.oktacdn.com/okta-signin-widget/7.28.1/js/okta-sign-in.min.js"
       type="text/javascript"
+      integrity="sha384-HH8NBwDJFHGRPonrfHz6DpzcL3iB5oRgPSKbHoowOXXr1R4a6VB13cWqtfOjOtH1"
+      crossorigin="anonymous"
     ></script>
+
     <link
-      href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/css/okta-sign-in.min.css"
+      href="https://global.oktacdn.com/okta-signin-widget/7.28.1/css/okta-sign-in.min.css"
       type="text/css"
       rel="stylesheet"
-    />
-    <link
-      href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.16.0/css/okta-theme.css"
-      type="text/css"
-      rel="stylesheet"
+      integrity="sha384-hWO50VHqC4T+PDnYbDX7gbW0OrGRVz4SfhJd9fnSqNeeTu86P4T71K1r3zw9QvgH"
+      crossorigin="anonymous"
     />
 
     <script type="text/javascript" charset="utf-8">
@@ -55,22 +56,62 @@
   <body>
     <div class="container">
       <h1 class="text-center">Simple Web Page</h1>
-      <div id="messageBox" class="jumbotron">
-        You are not logged in. Get outta here! Shoo! >:S
-      </div>
-      <!-- where the sign-in form will be displayed -->
+      <div id="messageBox" class="jumbotron">You are not logged in.</div>
+      <!-- where the sign-in form appears -->
       <div id="okta-login-container"></div>
+      <button
+        id="logout"
+        class="button"
+        onclick="logout()"
+        style="display: none"
+      >
+        Logout
+      </button>
     </div>
+    <script type="text/javascript">
+      var oktaConfig = {
+        issuer: "https://dev-91539029.okta.com/oauth2/default",
+        redirectUri: "https://vivekpatel1319.github.io/testingPage",
+        clientId: "0oan9o2knsVqTvcJV5d7",
+      };
+      // Search for URL Parameters to see if a user is being routed to the application to recover password
+      var searchParams = new URL(window.location.href).searchParams;
+      oktaConfig.otp = searchParams.get("otp");
+      oktaConfig.state = searchParams.get("state");
 
-    <h1>Visibility is Hide</h1>
-    <b>Okta Auth JS Simple Redirect App</b>
-    <hr />
-    <div id="content-jwt"></div>
-    <hr />
-    <div id="uxActiveOptions">
-      <b>Functions:</b>
-      <br /><button onclick="authClient.signOut();">Close Okta Session</button>
-    </div>
+      const oktaSignIn = new OktaSignIn(oktaConfig);
+
+      oktaSignIn.authClient.token.getUserInfo().then(
+        function (user) {
+          document.getElementById("messageBox").innerHTML =
+            "Hello, " + user.email + "! You are *still* logged in! :)";
+          document.getElementById("logout").style.display = "block";
+        },
+        function (error) {
+          oktaSignIn
+            .showSignInToGetTokens({
+              el: "#okta-login-container",
+            })
+            .then(function (tokens) {
+              oktaSignIn.authClient.tokenManager.setTokens(tokens);
+              oktaSignIn.remove();
+
+              const idToken = tokens.idToken;
+              document.getElementById("messageBox").innerHTML =
+                "Hello, " + idToken.claims.email + "! You just logged in! :)";
+              document.getElementById("logout").style.display = "block";
+            })
+            .catch(function (err) {
+              console.error(err);
+            });
+        }
+      );
+
+      function logout() {
+        oktaSignIn.authClient.signOut();
+        location.reload();
+      }
+    </script>
 
     <button
       type="button"
@@ -155,54 +196,6 @@
       const toggleMessenger = () => {
         bMessengerOpened ? closeMessenger() : openMessenger();
       };
-    </script>
-
-    <script type="text/javascript">
-      var oktaSignIn = new OktaSignIn({
-        baseOktaURL: "https://dev-91539029.okta.com", //For example, https://dev-12345678.okta.com
-        appClientID: "0oan9o2knsVqTvcJV5d7", // For example, 0oa73hm5sh9jf6s5e1d6
-        authParams: {
-          issuer: "default",
-          responseType: ["token", "id_token"],
-          display: "page",
-        },
-      });
-
-      if (oktaSignIn.token.hasTokensInUrl()) {
-        oktaSignIn.token.parseTokensFromUrl(
-          // If we get here, the user just logged in.
-          function success(res) {
-            var accessToken = res[0];
-            var idToken = res[1];
-
-            oktaSignIn.tokenManager.add("accessToken", accessToken);
-            oktaSignIn.tokenManager.add("idToken", idToken);
-
-            window.location.hash = "";
-            document.getElementById("messageBox").innerHTML =
-              "Hello, " + idToken.claims.email + "! You just logged in! :)";
-          },
-          function error(err) {
-            console.error(err);
-          }
-        );
-      } else {
-        oktaSignIn.session.get(function (res) {
-          // If we get here, the user is already signed in.
-          if (res.status === "ACTIVE") {
-            document.getElementById("messageBox").innerHTML =
-              "Hello, " + res.login + "! You are *still* logged in! :)";
-            return;
-          }
-          oktaSignIn.renderEl(
-            { el: "#okta-login-container" },
-            function success(res) {},
-            function error(err) {
-              console.error(err);
-            }
-          );
-        });
-      }
     </script>
   </body>
 </html>
