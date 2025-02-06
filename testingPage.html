@@ -107,17 +107,13 @@
         (e) => (customLauncher.style.display = "block")
       );
 
-      Genesys("subscribe", "Auth.ready", (e) =>
-        console.log("Subscribed to Auth")
-      );
-
       // #2 Subscribe to the Messenger.opened event - Update the status of Messenger as opened
       Genesys("subscribe", "Messenger.opened", (e) => {
         bMessengerOpened = true;
         /*
-                Update your custom launcher button here indicating a Messenger opened state i.e. show a KeyboardArrowDownIcon
-                or hide your custom launcher button if you prefer not to indicate that Messenger is opened
-              */
+                            Update your custom launcher button here indicating a Messenger opened state i.e. show a KeyboardArrowDownIcon
+                            or hide your custom launcher button if you prefer not to indicate that Messenger is opened
+                          */
         customLauncher.style.display = "none";
         console.log(e);
       });
@@ -126,11 +122,29 @@
       Genesys("subscribe", "Messenger.closed", (e) => {
         bMessengerOpened = false;
         /*
-                Update your custom launcher button here indicating a Messenger closed state i.e. show a MessageIcon
-                or show your custom launcher button if you prefer to indicate that Messenger is closed
-              */
+                            Update your custom launcher button here indicating a Messenger closed state i.e. show a MessageIcon
+                            or show your custom launcher button if you prefer to indicate that Messenger is closed
+                          */
         customLauncher.style.display = "block";
         console.log(e);
+      });
+
+      Genesys("registerPlugin", "AuthProvider", (AuthProvider) => {
+        let oktaTransactionStorage = window.document.cookie.toString(); // Get nonce from cookie
+        if (oktaTransactionStorage) {
+          const storage = oktaTransactionStorage.split("okta-oauth-nonce=")[1]; // Extract 'okta-oauth-nonce' cookie from 'oktaTransactionStorage'
+          const nonce = storage.split(";")[0];
+        } else () => console.log("Error");
+
+        AuthProvider.registerCommand("getAuthCode", (e) => {
+          //Messenger calls this command to get the the tokens.
+
+          e.resolve({
+            authCode: authCode, // Pass your authCode here
+            redirectUri: redirectUri, // Pass the redirection URI configured in your authentication provider here
+            nonce: nonce,
+          });
+        });
       });
 
       const openMessenger = () => {
