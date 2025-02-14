@@ -25,28 +25,53 @@
             .getConversations(opts)
             .then((data) => {
               console.log(data.entities);
-              //   let apiInstance = new platformClient.ConversationsApi();
+              let apiInstance = new platformClient.ConversationsApi();
 
-              //   let conversationId = "conversationId_example"; // String | conversationId
-              //   let participantId = "" // String | participantId
-              //   let body = {
-              //     muted: true,
-              //   };
+              let conversationId = data.entities[0].id; // String | conversationId
+              let participantId = data.entities[0].participants.filter(
+                (p) => p.purpose == "agent"
+              )[0].id; // String | participantId
+              let customerId = data.entities[0].participants.filter(
+                (p) => p.purpose == "customer"
+              )[0].id;
+              let body = {
+                muted: true,
+              };
 
-              //   // Update the attributes on a conversation participant.
-              //   apiInstance
-              //     .patchConversationsCallParticipantAttributes(
-              //       conversationId,
-              //       participantId,
-              //       body
-              //     )
-              //     .then((data) => {})
-              //     .catch((err) => {
-              //       console.log(
-              //         "There was a failure calling patchConversationsCallParticipantAttributes"
-              //       );
-              //       console.error(err);
-              //     });
+              // Update the attributes on a conversation participant.
+              apiInstance
+                .patchConversationsCallParticipantAttributes(
+                  conversationId,
+                  customerId,
+                  body
+                )
+                .then((data) => {
+                  let body = {
+                    speakTo: "BOTH",
+                    address: "+13175971660",
+                  };
+                  apiInstance
+                    .postConversationsCallParticipantConsultExternal(
+                      conversationId,
+                      customerId,
+                      body
+                    )
+                    .then((data) => {
+                      console.log("Worked until the blind transfer");
+                    })
+                    .catch((err) => {
+                      console.log(
+                        "There was a failure calling postConversationsCallParticipantConsultExternal"
+                      );
+                      console.error(err);
+                    });
+                })
+                .catch((err) => {
+                  console.log(
+                    "There was a failure calling patchConversationsCallParticipantAttributes"
+                  );
+                  console.error(err);
+                });
             })
             .catch((err) => {
               console.log("There was a failure calling getConversations");
