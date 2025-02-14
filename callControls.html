@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- Include the CJS SDK -->
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/215.0.0/purecloud-platform-client-v2.min.js"></script>
+
+    <script type="text/javascript">
+      // Obtain a reference to the platformClient object
+      const platformClient = require("platformClient");
+    </script>
+  </head>
+  <body>
+    <script type="javascript">
+      const client = platformClient.ApiClient.instance;
+      client.loginImplicitGrant("5bc71ed7-0c31-4351-aca3-ff8a59c88432", "https://vivekpatel1319.github.io/callControls")
+        .then((data) => {
+          console.log(data);
+          // Do authenticated things
+        })
+        .catch((err) => {
+          // Handle failure response
+          console.log(err);
+        });
+    </script>
+  </body>
+</html>
