@@ -11,7 +11,8 @@
       // Obtain a reference to the platformClient object
       const platformClient = require("platformClient");
       const client = platformClient.ApiClient.instance;
-      client
+      client;
+      await
         .loginImplicitGrant(
           "5bc71ed7-0c31-4351-aca3-ff8a59c88432",
           "https://vivekpatel1319.github.io/callControls"
@@ -21,7 +22,8 @@
           let opts = {
             communicationType: "Call",
           };
-          apiInstance
+          apiInstance;
+          await
             .getConversations(opts)
             .then((data) => {
               console.log(data.entities);
@@ -39,7 +41,8 @@
               };
 
               // Update the attributes on a conversation participant.
-              apiInstance
+              apiInstance;
+              await
                 .patchConversationsCallParticipantAttributes(
                   conversationId,
                   customerId,
@@ -50,7 +53,8 @@
                     speakTo: "BOTH",
                     address: "+13175971660",
                   };
-                  apiInstance
+                  apiInstance;
+                  await
                     .postConversationsCallParticipantConsultExternal(
                       conversationId,
                       customerId,
