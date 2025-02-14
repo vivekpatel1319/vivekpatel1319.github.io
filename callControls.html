@@ -10,20 +10,54 @@
     <script type="text/javascript">
       // Obtain a reference to the platformClient object
       const platformClient = require("platformClient");
-    </script>
-  </head>
-  <body>
-    <script type="javascript">
       const client = platformClient.ApiClient.instance;
-      client.loginImplicitGrant("5bc71ed7-0c31-4351-aca3-ff8a59c88432", "https://vivekpatel1319.github.io/callControls")
+      client
+        .loginImplicitGrant(
+          "5bc71ed7-0c31-4351-aca3-ff8a59c88432",
+          "https://vivekpatel1319.github.io/callControls"
+        )
         .then((data) => {
-          console.log(data);
-          // Do authenticated things
+          let apiInstance = new platformClient.ConversationsApi();
+          let opts = {
+            communicationType: "Call",
+          };
+          apiInstance
+            .getConversations(opts)
+            .then((data) => {
+              console.log(data);
+              //   let apiInstance = new platformClient.ConversationsApi();
+
+              //   let conversationId = "conversationId_example"; // String | conversationId
+              //   let participantId = "" // String | participantId
+              //   let body = {
+              //     muted: true,
+              //   };
+
+              //   // Update the attributes on a conversation participant.
+              //   apiInstance
+              //     .patchConversationsCallParticipantAttributes(
+              //       conversationId,
+              //       participantId,
+              //       body
+              //     )
+              //     .then((data) => {})
+              //     .catch((err) => {
+              //       console.log(
+              //         "There was a failure calling patchConversationsCallParticipantAttributes"
+              //       );
+              //       console.error(err);
+              //     });
+            })
+            .catch((err) => {
+              console.log("There was a failure calling getConversations");
+              console.error(err);
+            });
         })
         .catch((err) => {
           // Handle failure response
           console.log(err);
         });
     </script>
-  </body>
+  </head>
+  <body></body>
 </html>
