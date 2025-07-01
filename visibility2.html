@@ -25,7 +25,7 @@
         "https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js",
         {
           environment: "prod",
-          deploymentId: "500a8da8-ebb6-4caf-b411-4c55c99c34a9",
+          deploymentId: "0a963fa5-641d-4bb3-8a58-fb5463389052",
           debug: true,
         }
       );
@@ -75,8 +75,13 @@
         console.log(e);
       });
 
+      Genesys("subscribe", "Auth.ready", (e) =>
+        console.log("auth plugin is ready.")
+      );
+
       const openMessenger = () => {
         console.log("Opening messenger...");
+
         Genesys("command", "Messenger.open");
         Genesys("command", "Database.set", {
           messaging: {
@@ -87,6 +92,7 @@
             },
           },
         });
+        Genesys();
       };
       const closeMessenger = () => {
         console.log("Closing messenger...");
